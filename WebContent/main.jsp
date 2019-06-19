@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="css/bootstrap.css">
 <link rel="stylesheet" href="css/bcustom.css">
 
-<title>JSP 게시판 웹 사이트</title>
+<title>JSP 게시판 웹 사이트1111</title>
 </head>
 <body>
 	<%
