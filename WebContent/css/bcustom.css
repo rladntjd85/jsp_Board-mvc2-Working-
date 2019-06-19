@@ -1,0 +1,19 @@
+@import url(https://fonts.googleapis.com/earlyaccess/hanna.css);
+@import url(https://fonts.googleapis.com/earlyaccess/notosanskr.css);
+@import url(https://fonts.googleapis.com/earlyaccess/nanumgothic.css);
+
+* {
+
+  font-family: 'Nanum Gothic';
+
+}
+
+h1 {
+
+  font-family: 'Hanna';
+
+}
+
+h4 {
+	color: white;
+}
