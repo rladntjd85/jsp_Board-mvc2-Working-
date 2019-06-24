@@ -65,17 +65,22 @@ public class BDao {
 		
 	}
 	
-	public ArrayList<BDto> list() {
+	public ArrayList<BDto> list(String pageNumber) {
 		
 		ArrayList<BDto> dtos = new ArrayList<BDto>();
 		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		
+		System.out.println(":::::list는"+pageNumber);
+		
 		try {
-			String SQL = "select bId, bName, bTitle, bContent, bDate, bHit, bGroup, bstep, bIndent, userID from mvc_board ORDER BY bGroup desc, bStep asc";
+			//10개씩 끊기 위한 쿼리문
+			String SQL = "select * from mvc_board where bGroup > (select max(bGroup) from mvc_board) - ? and bGroup <= (select max(bGroup) from mvc_board) - ? order by bGroup desc, bStep asc";
 			conn = dataSource.getConnection();
 			ps = conn.prepareStatement(SQL);
+			ps.setInt(1, Integer.parseInt(pageNumber) * 10);
+			ps.setInt(2, (Integer.parseInt(pageNumber) -1) * 10);
 			rs = ps.executeQuery();
 			
 			while (rs.next()) {
@@ -108,6 +113,65 @@ public class BDao {
 			}
 		}
 		return dtos;
+	}
+	
+	public boolean nextPage(String pageNumber) {
+		// TODO Auto-generated method stub
+		System.out.println(":::::nextPage는"+pageNumber);
+		try {
+			conn = dataSource.getConnection();
+			
+			String sql = "select * from mvc_board where bGroup = ?";
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, Integer.parseInt(pageNumber) * 10);
+			rs = ps.executeQuery();
+			
+			if (rs.next()) {
+				return true;
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}finally {
+			try {
+				if(rs != null) rs.close();
+				if(ps != null) ps.close();
+				if(conn != null) conn.close();
+			} catch (Exception e2) {
+				// TODO: handle exception
+				e2.printStackTrace();
+			}
+		}
+		return false;
+	}
+	
+	public int targetPage(String pageNumber) {
+		// TODO Auto-generated method stub
+		System.out.println(":::::targetPage는"+pageNumber);
+		try {
+			conn = dataSource.getConnection();
+			String sql = "select count(bGroup) from mvc_board where bGroup > ?";
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, (Integer.parseInt(pageNumber) -1) * 10);
+			rs = ps.executeQuery();
+			
+			if (rs.next()) {
+				return rs.getInt(1) / 10;
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}finally {
+			try {
+				if(rs != null) rs.close();
+				if(ps != null) ps.close();
+				if(conn != null) conn.close();
+			} catch (Exception e2) {
+				// TODO: handle exception
+				e2.printStackTrace();
+			}
+		}
+		return 0;
 	}
 
 	public BDto contentView(String strId) {

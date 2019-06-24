@@ -25,7 +25,12 @@
 		if(session.getAttribute("userID") != null){
 			userID = (String)session.getAttribute("userID");
 		}
+		
+		String pageNumber = (String)request.getAttribute("pageNumber");
+		System.out.println("jsp의 받는값"+pageNumber);
 	%>
+	<script type="text/javascript">
+	</script>
 	<nav class="navbar navbar-default">
 		<div class="navbar-header">
 			<button	type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"
@@ -104,9 +109,53 @@
 					<td>${dto.bGroup}</td>
 				</tr>
 				</c:forEach>
+				<tr>
+					<td colspan="6">
+						 	<a href="write_view.do" class="btn btn-primary pull-right">글작성</a>
+						 	<ul class="pagination" style="margin: 0 auto;">  
+							<%
+								int startPage = (Integer.parseInt(pageNumber) / 10) * 10 + 1;
+								if(Integer.parseInt(pageNumber) % 10 == 0) startPage -= 10;
+								int targetPage = new BDao().targetPage(pageNumber);
+								if(startPage != 1){
+							%>
+								<li><a href="list.do?pageNumber=<%=startPage -1 %>"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
+							<%
+								}else{
+							%>
+								<li><span class="glyphicon glyphicon-chevron-left" style="color: gray;"></span></li>
+							<%
+								}
+								for(int i = startPage; i < Integer.parseInt(pageNumber); i++){
+							%>
+								<li><a href="list.do?pageNumber=<%=i %>"><%=i %></a></li>
+							<%
+								}
+							%>
+								<li class="active"><a href="list.do?pageNumber=<%=pageNumber %>"><%=pageNumber %></a></li>
+							<%
+								for(int i = Integer.parseInt(pageNumber) + 1; i <= targetPage + Integer.parseInt(pageNumber); i++){
+									if(i < startPage + 10){
+							%>
+										<li><a href="list.do?pageNumber=<%=i %>"><%=i %></a></li>
+							<%
+									}
+								}
+								if(targetPage + Integer.parseInt(pageNumber) > startPage + 9){
+							%>
+								<li><a href="list.do?pageNumber=<%=startPage + 10 %>"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
+							<%
+								}else{
+							%>
+								<li><span class="glyphicon glyphicon-chevron-right" style="color: gray;"></span></li>
+							<%
+								}
+							%>
+						</ul>	
+					</td>
+				</tr>
 			</tbody>
-			</table>
-		 <a href="write_view.do" class="btn btn-primary pull-right">글작성</a> 
+		</table>
 	</div>
 </div>
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
